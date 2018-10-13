@@ -5,7 +5,7 @@ import threading
 class Server:
     def __init__(self):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.sock.bind(("0.0.0.0", 21))
+        self.sock.bind(("0.0.0.0", 5060))
         self.sock.listen(1)
         self.connections = []
 

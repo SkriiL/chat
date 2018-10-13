@@ -1,5 +1,6 @@
 import socket
 import threading
+from login import login
 
 
 class Client:
@@ -7,18 +8,19 @@ class Client:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
     def connect(self, address):
-        self.sock.connect((address, 21))
+        self.sock.connect((address, 5060))
 
     def send(self):
         while True:
-            self.sock.send(bytes(input(""), "utf-8"))
+            msg = input("")
+            self.sock.send(bytes(current_user.get_username() + " > " + msg, "utf-8"))
 
     def recv(self):
         while True:
             data = self.sock.recv(1024)
             if not data:
                 break
-            print(str(data))
+            print(str(data, encoding="utf-8"))
 
     def run(self):
         thread = threading.Thread(target=self.send)
@@ -27,7 +29,11 @@ class Client:
 
         self.recv()
 
+    def close(self):
+        self.sock.close()
 
+
+current_user = login()
 client = Client()
 client.connect("127.0.0.1")
 client.run()
