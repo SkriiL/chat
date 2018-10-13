@@ -14,12 +14,15 @@ class Server:
         while True:
             try:
                 data = c.recv(1024)
-                for connection in self.connections:
-                    connection.send(data)
-                if not data:
-                    break
-            except:
-                self.restart()
+            except ConnectionResetError:
+                data = bytes("", "utf-8")
+            for i in range(0, len(self.connections)):
+                try:
+                    self.connections[i].send(data)
+                except ConnectionResetError:
+                    del self.connections[i]
+            if not data:
+                break
 
     def run(self):
         while True:
