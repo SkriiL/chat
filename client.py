@@ -2,6 +2,7 @@ import socket
 import threading
 from login import login
 import time
+from functions.colors import Colors
 
 
 class Client:
@@ -9,9 +10,11 @@ class Client:
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.address = ""
         self.last_msg = "89ruhfdkhjsdbesnbdsb"
+        self.all_users = {}
+        self.colors = Colors()
 
     def connect(self, address):
-        self.sock.connect((address, 5060))
+        self.sock.connect((address, 56789))
         self.address = address
 
     def send(self):
@@ -29,7 +32,16 @@ class Client:
             if data == "./restart":
                 self.restart()
             elif self.last_msg != data:
-                print(data)
+                color = self.get_color(data)
+                print(color + data + self.colors.reset)
+
+    def get_color(self, data):
+        data = data.split()
+        for key, value in self.all_users.items():
+            if key == data[0]:
+                return value
+        self.all_users[data[0]] = self.colors.pick()
+        return self.all_users[data[0]]
 
     def run(self):
         thread = threading.Thread(target=self.send)
@@ -44,11 +56,11 @@ class Client:
     def restart(self):
         time.sleep(1)
         self.sock.close()
-        self.sock.connect((self.address, 5060))
+        self.sock.connect((self.address, 56789))
         self.run()
 
 
 current_user = login()
 client = Client()
-client.connect("127.0.0.1")
+client.connect("skriil.ddnss.de")
 client.run()

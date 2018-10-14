@@ -15,7 +15,7 @@ def login():
     for i in range(0, 3):
         password = input("Passwort: ")
         if picked_user.get_password_decrypted() == password:
-            print("Login erfolgreich!")
+            print("Login erfolgreich! \n \n \n \n")
             return picked_user
         else:
             print("Falsches Passwort, bitte erneut versuchen")
