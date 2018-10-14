@@ -26,3 +26,8 @@ class Client:
         thread.start()
 
         self.recv()
+
+
+c = Client()
+c.connect()
+c.run()
