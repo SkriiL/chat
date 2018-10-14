@@ -3,15 +3,17 @@ import threading
 from login import login
 import time
 from functions.colors import Colors
+import services.user_service as user_service
 
 
 class Client:
-    def __init__(self):
+    def __init__(self, current_user):
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.address = ""
         self.last_msg = "89ruhfdkhjsdbesnbdsb"
         self.all_users = {}
         self.colors = Colors()
+        self.current_user = current_user
 
     def connect(self, address):
         self.sock.connect((address, 56789))
@@ -20,8 +22,24 @@ class Client:
     def send(self):
         while True:
             msg = input("")
-            self.last_msg = current_user.get_username() + " > " + msg
-            self.sock.send(bytes(current_user.get_username() + " > " + msg, "utf-8"))
+            if msg == "/c":
+                if self.current_user.get_security().can_create:
+                    user_service.new_user()
+                else:
+                    print(self.colors.red + "Sie haben nicht die nötigen Rechte um einen neuen Nutzer zu erstellen." + self.colors.reset)
+            elif msg == "/m":
+                if self.current_user.get_security().can_modify:
+                    print("Bearbeiten")  # TODO edit users
+                else:
+                    print(self.colors.red + "Sie haben nicht die nötigen Rechte um einen vorhandenen Nutzer zu bearbeiten." + self.colors.reset)
+            elif msg == "/e":
+                if self.current_user.get_security().can_encrypt:
+                    print("Verschlüsseln")  # TODO edit users
+                else:
+                    print(self.colors.red + "Sie haben nicht die nötigen Rechte um Nachrichten zu verschlüsseln." + self.colors.reset)
+            else:
+                self.last_msg = self.current_user.get_username() + " > " + msg
+                self.sock.send(bytes(self.current_user.get_username() + " > " + msg, "utf-8"))
 
     def recv(self):
         while True:
@@ -60,7 +78,10 @@ class Client:
         self.run()
 
 
-current_user = login()
-client = Client()
+cu = login()
+print("/c = create new user \n"
+      "/m = modify existing user \n"
+      "/e = encrypt message")
+client = Client(cu)
 client.connect("skriil.ddnss.de")
 client.run()

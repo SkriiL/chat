@@ -1,7 +1,7 @@
 from models.user_model import User
 import random
 import sqlite3
-import models.security as sec
+import models.security_model as sec
 import os
 
 
@@ -9,7 +9,7 @@ def new_user():
     u = User()
     u.set_id(random.randint(1, 999))
     u.set_username(input("Nutzername: "))
-    u.set_password(input("Passwort: "))
+    u.set_password_encrypt(input("Passwort: "))
     u.set_mail(input("Mail: "))
     for i in range(len(sec.secs)):
         print(str(i + 1) + " | " + sec.secs[i].name)
@@ -57,4 +57,3 @@ def list_to_user(user_list):
     u.set_mail(user_list[3])
     u.set_security(sec.get_by_name(user_list[4]))
     return u
-
