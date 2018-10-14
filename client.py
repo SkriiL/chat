@@ -21,5 +21,8 @@ class Client:
             print(data)
 
     def run(self):
-        thread = threading.
+        thread = threading.Thread(target=self.send)
         thread.daemon = True
+        thread.start()
+
+        self.recv()
