@@ -4,6 +4,8 @@ from login import login
 import time
 from functions.colors import Colors
 import services.user_service as user_service
+from functions.encryption import full_encrypt
+from functions.decryption import full_decrypt
 
 
 class Client:
@@ -14,6 +16,7 @@ class Client:
         self.all_users = {}
         self.colors = Colors()
         self.current_user = current_user
+        self.last_recv = ""
 
     def connect(self, address):
         self.sock.connect((address, 56789))
@@ -36,9 +39,17 @@ class Client:
                     print(self.colors.red + "Sie haben nicht die nötigen Rechte um einen vorhandenen Nutzer zu bearbeiten." + self.colors.reset)
             elif msg == "/e":
                 if self.current_user.get_security().can_encrypt:
-                    print("Verschlüsseln")  # TODO edit users
+                    msg = full_encrypt(input("Zu verschlüsselnde Nachricht: "))
+                    self.last_msg = self.current_user.get_username() + " > " + msg + " | diese Nachricht ist verschlüsselt, /d um die Nachricht zu entschlüsseln!"
+                    self.sock.send(bytes(self.current_user.get_username() + " > " + msg + " | diese Nachricht ist verschlüsselt, /d um die Nachricht zu entschlüsseln!", "utf-8"))
                 else:
                     print(self.colors.red + "Sie haben nicht die nötigen Rechte um Nachrichten zu verschlüsseln." + self.colors.reset)
+            elif msg == "/d":
+                if self.current_user.get_security().can_decrypt:
+                    data = full_decrypt(self.last_recv.split(">")[1].split("|")[0].strip())
+                    print("Entschlüsselte Nachricht: " + data)
+                else:
+                    print(self.colors.red + "Sie haben nicht die nötigen Rechte um Nachrichten zu entschlüsseln." + self.colors.reset)
             else:
                 self.last_msg = self.current_user.get_username() + " > " + msg
                 self.sock.send(bytes(self.current_user.get_username() + " > " + msg, "utf-8"))
@@ -53,6 +64,7 @@ class Client:
                 self.restart()
             elif self.last_msg != data:
                 color = self.get_color(data)
+                self.last_recv = data
                 print(color + data + self.colors.reset)
 
     def get_color(self, data):

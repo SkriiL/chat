@@ -16,7 +16,10 @@ def monoalphabetic(text):
     chiffre = ""
     dict = pickle.load(open("dict", "rb"))
     for letter in text:
-        chiffre += dict[letter]
+        try:
+            chiffre += dict[letter]
+        except KeyError:
+            chiffre += letter
     return chiffre
 
 

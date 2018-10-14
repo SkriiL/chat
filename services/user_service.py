@@ -2,7 +2,6 @@ from models.user_model import User
 import random
 import sqlite3
 import models.security_model as sec
-import os
 
 
 def new_user():

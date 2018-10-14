@@ -12,12 +12,15 @@ def caesar(text):
 
 def monoalphabetic(text):
     clear = ""
+    actual_len = 0
     dict = pickle.load(open("dict", "rb"))
-
     for letter in text:
         for key, value in dict.items():
             if value == letter:
                 clear += key
+        actual_len += 1
+        if actual_len > len(clear):
+            clear += letter
     return clear
 
 
