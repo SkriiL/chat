@@ -15,10 +15,10 @@ class Client:
     def recv(self):
         while True:
             data = self.sock.recv(1024)
-            if not data:
-                break
             data = str(data, encoding="utf-8")
             print(data)
+            if not data:
+                break
 
     def run(self):
         thread = threading.Thread(target=self.send)
