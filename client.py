@@ -29,7 +29,9 @@ class Client:
                     print(self.colors.red + "Sie haben nicht die nötigen Rechte um einen neuen Nutzer zu erstellen." + self.colors.reset)
             elif msg == "/m":
                 if self.current_user.get_security().can_modify:
-                    print("Bearbeiten")  # TODO edit users
+                    user_service.print_ids()
+                    user = user_service.get_single(int(input("Welchen Nutzer wollen sie bearbeiten? (Bitte ID eingeben!)")))
+                    user_service.modify_user(user)
                 else:
                     print(self.colors.red + "Sie haben nicht die nötigen Rechte um einen vorhandenen Nutzer zu bearbeiten." + self.colors.reset)
             elif msg == "/e":
@@ -81,7 +83,8 @@ class Client:
 cu = login()
 print("/c = create new user \n"
       "/m = modify existing user \n"
-      "/e = encrypt message")
+      "/e = encrypt message \n"
+      "/id = print all ids + usernames \n")
 client = Client(cu)
 client.connect("skriil.ddnss.de")
 client.run()

@@ -14,13 +14,14 @@ def new_user():
     for i in range(len(sec.secs)):
         print(str(i + 1) + " | " + sec.secs[i].name)
     which = int(input("Wählen sie eine Sicherheitsstufe: "))
-    u.set_security(sec.secs[which - 1].name)
+    u.set_security(sec.secs[which - 1])
     save_user(u)
+    print("Nutzer erstellt.")
     return u
 
 
 def save_user(user):
-    params = (user.get_id(), user.get_username(), user.get_password(), user.get_mail(), user.get_security())
+    params = (user.get_id(), user.get_username(), user.get_password(), user.get_mail(), user.get_security().name)
     conn = sqlite3.connect("db.db")
     c = conn.cursor()
     c.execute("INSERT INTO user VALUES(?, ?, ?, ?, ?)", params)
@@ -28,11 +29,58 @@ def save_user(user):
     conn.close()
 
 
+def delete_user(id):
+    params = (id, )
+    conn = sqlite3.connect("db.db")
+    c = conn.cursor()
+    c.execute("DELETE FROM user WHERE id=?", params)
+    conn.commit()
+    conn.close()
+
+
+def modify_user(user):
+    print("1 | Nutzername \n"
+          "2 | Passwort \n"
+          "3 | Mail \n"
+          "4 | Security")
+    choice = input("Was möchten sie bearbeiten?")
+    if choice == "1":
+        print("Aktueller Nutzername: " + user.get_username())
+        new = input("Neuer Nutzername: ")
+        user.set_username(new)
+    elif choice == "2":
+        print("Aktuelles Password: " + user.get_password())
+        new = input("Neues Password: ")
+        user.set_password(new)
+    elif choice == "3":
+        print("Aktuelle Mail: " + user.get_mail())
+        new = input("Neue Mail: ")
+        user.set_mail(new)
+    elif choice == "4":
+        print("Aktuelle Sicherheitsstufe: " + user.get_security().name)
+        for i in range(len(sec.secs)):
+            print(str(i + 1) + " | " + sec.secs[i].name)
+        which = int(input("Wählen sie eine Sicherheitsstufe: "))
+        user.set_security(sec.secs[which - 1].name)
+    if input("Wollen sie noch etwas bearbeiten? (j | n) ").lower() == "j":
+        modify_user(user)
+    else:
+        delete_user(user.get_id())
+        save_user(user)
+        print("Bearbeitung abgeschlossen.")
+
+
+def print_ids():
+    users = get_all()
+    for user in users:
+        print(str(user.get_id()) + " | " + user.get_username())
+
+
 def get_single(id):
     params = (id,)
     conn = sqlite3.connect("db.db")
     c = conn.cursor()
-    c.execute("SELECT FROM user WHERE id=?", params)
+    c.execute("SELECT * FROM user WHERE id=?", params)
     user = c.fetchone()
     user = list_to_user(user)
     conn.close()
