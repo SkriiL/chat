@@ -21,6 +21,8 @@ class Server:
                     self.connections[i].send(data)
                 except ConnectionResetError:
                     del self.connections[i]
+                except BrokenPipeError:
+                    print("BrokenPipeError")
             if not data:
                 break
 
