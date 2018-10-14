@@ -1,6 +1,7 @@
 from models.user_model import User
 from services.user_service import get_all
 import os
+import getpass
 
 
 def login():
@@ -14,7 +15,7 @@ def login():
         print("Nutzer existiert nicht, bitte erneut versuchen!")
         login()
     for i in range(0, 3):
-        password = input("Passwort: ")
+        password = getpass.getpass("Passwort: ")
         if picked_user.get_password_decrypted() == password:
             os.system("cls")
             print("Login erfolgreich! \n")

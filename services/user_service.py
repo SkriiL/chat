@@ -2,13 +2,14 @@ from models.user_model import User
 import random
 import sqlite3
 import models.security_model as sec
+import getpass
 
 
 def new_user():
     u = User()
     u.set_id(random.randint(1, 999))
     u.set_username(input("Nutzername: "))
-    u.set_password_encrypt(input("Passwort: "))
+    u.set_password_encrypt(getpass.getpass("Passwort: "))
     u.set_mail(input("Mail: "))
     for i in range(len(sec.secs)):
         print(str(i + 1) + " | " + sec.secs[i].name)
