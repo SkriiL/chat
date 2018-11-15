@@ -1,7 +1,8 @@
 import sys
 from qtpy import QtWidgets
-
+from client import Client
 from ui.mainwindow import Ui_MainWindow
+import threading
 
 app = QtWidgets.QApplication(sys.argv)
 
@@ -14,14 +15,26 @@ class MainWindow(QtWidgets.QMainWindow):
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
 
-        self.ui.button.clicked.connect(self.on_button_click)
+        self.client = Client()
+        self.client.connect()
 
-    def on_button_click(self):
-        self.ui.input.setText("Hallo")
-        test = self.ui.input.text()
-        print(test)
+        self.ui.send.clicked.connect(self.send)
+
+    def send(self):
+        self.client.send(self.ui.text_send.toPlainText())
+
+    def recv(self):
+        while True:
+            msg = self.client.recv()
+
+    def make_thread(self):
+        t = threading.Thread(target=self.recv)
+        t.daemon = True
+        t.start()
+
 
 window = MainWindow()
+window.make_thread()
 
 window.show()
 
